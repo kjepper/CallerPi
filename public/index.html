@@ -94,7 +94,7 @@
 			
 			function getCallerHistoryBox(callTimeInMiliseconds, phoneNumber, firstName, lastName){
 				var container = $("<div>").css({'height':'155px', 'margin':'10 10 10 10'}).addClass('unread');
-				var photo = $("<div>").css({'height':'155px', 'float':'left', 'vertical-align':'top', 'padding-right':'10px'});
+				var photo = $("<div>").css({'height':'155px','width':'180px', 'float':'left', 'vertical-align':'top', 'padding-right':'10px', 'margin-right':'10px','overflow':'hidden'});
 				var image = $('<img />', {
 						src: '/images/photos/' + phoneNumber + '.jpg',
 						height: '100%'
