@@ -1,0 +1,162 @@
+<html>
+	<head>
+            <style>
+                html, body {
+					font-family: proxima-nova, sans-serif;
+                    margin:0;
+                    padding:0;
+					background-color:black;
+					color:#fff;
+					overflow:hidden;
+                }
+                
+                .unread{
+                    background-color: #197997;
+                }
+                
+                .read{
+                    background-color: #093145;   
+                }
+				
+				#content{
+					padding:50;
+					height:668px;
+				}
+				
+				#activecaller{
+					height:668px;
+					display:none;
+					background-color:#093145;
+					overflow:hidden;
+				}
+				
+				#callhistory{
+					height:668px;
+					overflow:hidden;
+				}
+                
+            </style>
+		<script src="/js/jquery-2.1.4.min.js" type="text/javascript"></script>	
+		<script src="/js/jquery.mousewheel.min.js" type="text/javascript"></script>	
+		<script src="/js/telnr.js" type="text/javascript"></script>	
+		<script>
+			//Some functional, top quality code and css...
+			activeCaller = null;
+			
+			function getActiveCaller(){
+				$.get('/api/getactivecaller', function(data) {
+					if(data.activeCaller &&  JSON.stringify(data.callerDetails) !== JSON.stringify(activeCaller) ){
+						console.log('changing');
+						activeCaller = data.callerDetails;
+						showActiveCaller();
+					} else if(!data.activeCaller && activeCaller){
+						activeCaller = null;
+						hideActiveCaller();
+					}
+					setTimeout(getActiveCaller,2000);
+				});		
+			}
+			
+			function showActiveCaller(){
+				addCallerToHistory(getCallerHistoryBox(new Date().getTime(), activeCaller.phoneNumber, activeCaller.firstName, activeCaller.lastName));
+				$('#activecallername').html("<b>"+activeCaller.firstName + ' ' + activeCaller.lastName+"</b>").css({'font-size':'70px', 'text-align':'center'});
+				$('#activecallerphoto').html(
+					$('<img />', {
+						src: '/images/photos/' + activeCaller.phoneNumber + '.jpg'
+					}).error(function() {
+						$(this).attr('src', '/images/photos/johndoe.jpg');
+					}).css({'height':'500px'})
+				).css({'text-align':'center'});
+				$('#activecallerphonenumber').html("<b>"+new TelNr(activeCaller.phoneNumber).toString('KG-NR')+"</b>").css({'font-size':'70px', 'text-align':'center'});
+				
+				
+				$( "#callhistory" ).fadeOut( 1000, function() {
+					$( "#activecaller" ).fadeIn("slow");
+				});
+								
+			}
+			
+			function refreshCallerHistory(){
+				$.get('/api/getcallhistory', function(data) {
+					$( "#callhistory" ).empty();
+					data.forEach(function(doc) {
+						addCallerToHistory(getCallerHistoryBox(doc._id, doc.callerDetails.phoneNumber, doc.callerDetails.firstName, doc.callerDetails.lastName));
+					});
+				});	                            
+			}
+			
+			function addCallerToHistory(callerBox){
+				$( "#callhistory" ).prepend(callerBox);
+				if($("#callhistory").children().length > 4){
+					$("#callhistory").children().last().remove();
+				}
+			}
+			
+			function getCallerHistoryBox(callTimeInMiliseconds, phoneNumber, firstName, lastName){
+				var container = $("<div>").css({'height':'155px', 'margin':'10 10 10 10'}).addClass('unread');
+				var photo = $("<div>").css({'height':'155px', 'float':'left', 'vertical-align':'top', 'padding-right':'10px'});
+				var image = $('<img />', {
+						src: '/images/photos/' + phoneNumber + '.jpg',
+						height: '100%'
+				}).error(function() {
+						$(this).attr('src', '/images/photos/johndoe.jpg');
+				});
+				photo.append(image);
+				var time = $("<div>").append(getFormattedDateTime(callTimeInMiliseconds)).css({'width':'700px', 'float':'left', 'vertical-align':'top', 'font-size':'40px'});
+				var details = $("<div>").append(firstName + ' ' + lastName).css({'width':'700px', 'float':'left', 'vertical-align':'top', 'font-size':'40px','overflow':'hidden'});
+				var phone = $("<div>").append(new TelNr(phoneNumber).toString('KG-NR')).css({'width':'700px', 'float':'left', 'vertical-align':'bottom', 'font-size':'40px','overflow':'hidden'});
+
+
+				container.append(photo).append(time).append(details).append(phone);
+				return container;
+			}
+                        
+			function hideActiveCaller(){
+				$( "#activecaller" ).fadeOut( 1000, function() {
+					$( "#callhistory" ).fadeIn("slow");
+				});			
+				
+				$('#activecallername').empty();
+				$('#activecallerphoto').empty();
+				$('#activecallerphonenumber').empty();				
+			}
+			
+			function getFormattedDateTime(timeInMiliseconds){
+				var date = new Date(timeInMiliseconds);
+				var weekDay = date.getDay();
+				var monthDay = date.getDate(); 
+				var month = date.getMonth()+1;
+				var year = date.getFullYear();
+
+				var hour = (date.getHours()<10?'0':'') + date.getHours();
+				var minute = (date.getMinutes()<10?'0':'') + date.getMinutes();
+
+				var textDayArray = new Array('zondag','maandag','dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
+				var textMonthArray = new Array('januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december');
+				return textDayArray[weekDay]+" "+monthDay+" "+textMonthArray[month]+" "+year+" "+hour+":"+minute;
+			}			
+			
+			$( document ).ready(function() {
+				$(document).on('mousewheel', function(event) {
+					$("#callhistory div").addClass('read').removeClass('unread');
+				});          
+				refreshCallerHistory();
+				getActiveCaller();
+			});			
+			
+					
+			
+		</script>
+	</head>
+	<body> 
+		<div id="content" style="">
+			<div id="activecaller">
+				<div id="activecallername"></div>
+				<div id="activecallerphoto"></div>
+				<div id="activecallerphonenumber"></div>
+			</div>
+			<div id="callhistory"></div>
+		</div>
+	</body>
+
+</html>

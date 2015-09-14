@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<script src="/js/jquery-2.1.4.min.js" type="text/javascript"></script>	
+		<script>
+			function insertDetails(){
+				$.get('/api/insert', $("#form").serialize());
+				$("#form").get(0).reset();
+			}			
+		</script>
+	</head>
+	<body style="">
+            <form id="form">
+				<label for="phoneNumber">Phone Number</label>				
+				<input type="text" name="phoneNumber" id="phoneNumber" size="50">
+				<br />
+				<label for="firstName">Firstname</label>				
+				<input type="text" name="firstName" id="firstName" size="50">
+				<br />
+				<label for="lastName">Lastname</label>				
+				<input type="text" name="lastName" id="lastName" size="50">                
+				<br />
+				<input type="button" value="Submit" onclick="insertDetails();">                				
+			</form>			
+	</body>
+
+</html>
