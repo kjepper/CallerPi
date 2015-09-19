@@ -37,7 +37,6 @@
                 
             </style>
 		<script src="/js/jquery-2.1.4.min.js" type="text/javascript"></script>	
-		<script src="/js/jquery.mousewheel.min.js" type="text/javascript"></script>	
 		<script src="/js/telnr.js" type="text/javascript"></script>	
 		<script>
 			//Some functional, top quality code and css...
@@ -136,9 +135,11 @@
 				return textDayArray[weekDay]+" "+monthDay+" "+textMonthArray[month]+" "+year+" "+hour+":"+minute;
 			}			
 			
-			$( document ).ready(function() {
-				$(document).on('mousewheel', function(event) {
-					$("#callhistory div").addClass('read').removeClass('unread');
+			$(document).ready(function() {
+				$(document).mousedown(function(e){
+					if (e.which == 2) {
+						$("#callhistory div").addClass('read').removeClass('unread');
+					}				
 				});          
 				refreshCallerHistory();
 				getActiveCaller();
