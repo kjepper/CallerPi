@@ -9,7 +9,7 @@ var sp = new SerialPort(modemPort, {
 sp.on("open", function () {
     console.log("Listening on port: " + modemPort);
 	//Send command to modem to show caller-id in nice format.
-    sp.write("AT+VCID=1", function(err, results) {
+    sp.write("AT+VCID=1\r", function(err, results) {
         sp.drain(console.log('Enabling CallerId nice format: ' + results));
     });    
     
@@ -19,8 +19,9 @@ sp.on("open", function () {
 		//If data contains a number extract it and activate the current caller.
         if(data.indexOf("NMBR=") > -1){
             var phoneNumber = data.substring(5);
-			console.log('Callers number: ' + phoneNumber);			
-			global.callHandler.receiveCall(phoneNumber);
+	    phoneNumber = phoneNumber.substring(0, phoneNumber.length-1);
+	    console.log('Callers number: ' + phoneNumber);			
+	    global.callHandler.receiveCall(phoneNumber);
         }
     });
 });
