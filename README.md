@@ -31,3 +31,30 @@ Node-serialport
 https://github.com/voodootikigod/node-serialport
 Nedb
 https://github.com/louischatriot/nedb
+
+
+
+-----------------------------------------------------------------------------------------
+Usefull links for installing on Raspberry Pi
+
+Resolution:
+http://weblogs.asp.net/bleroy/getting-your-raspberry-pi-to-output-the-right-resolution
+http://www.webtechgadgetry.com/2013/12/make-raspberry-pi-use-full-resolution-monitor/
+
+Disable log:
+http://linuxonflash.blogspot.nl/2015/02/optimizing-performance-on-raspberry-pi.html
+
+Kiosk mode:
+https://www.danpurdy.co.uk/web-development/raspberry-pi-kiosk-screen-tutorial/
+
+HDMI turnoff with screensaver
+http://simonmcc.blogspot.nl/2013/09/raspberry-pi-turn-off-hdmi-after.html
+
+   tvservice --explicit="DMT 16"
+   fbset -depth 8
+   fbset -depth 16
+  xrefresh -d :0.0
+
+Make sure chmod 755 on files
+in rc.local: su pi -c '/home/pi/screensaver/check_screen_state.pl < /dev/null &'
+
