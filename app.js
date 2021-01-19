@@ -2,8 +2,8 @@
 global.activeCaller = {activeCaller:false};
 //Timeout for when current call ends (since we can't monitor if call is still ongoing)
 global.activeCallerTimeOut = null;
-//global.modemPort = "/dev/ttyACM0";
-global.modemPort = "COM1";
+global.modemPort = "/dev/ttyACM0";
+//global.modemPort = "COM1";
 
 //Loading own libraries
 global.callHandler = require('./libs/callhandler');
